@@ -1,12 +1,20 @@
---PRIMERA PARTE: AUMENTAR SIZE EN 3MB
+/*9) Cambiar el tamaño de la base de datos BDEJEMPLO06 
+aumentándole el tamaño al archivo de datos de la siguiente manera:
+Nombre del Archivo BDEJEMPLO06FG_DATA
+Aumentar tamaño 3 MB
 
-ALTER DATABASE BDEJEMPLO06
+Luego de aumentarlo reducirlo nuevamente mediante 
+la instrucción DBCC SHRINKFILE, 
+quedanto de 5 MB
+*/
+--PRIMER PARTE
+/*ALTER DATABASE BDEJEMPLO06
 MODIFY FILE(
 NAME = N'BDEJEMPLO06FG_DATA',
-SIZE = 11MB --ORIGINAL SIZE (8MB)+3MB(INCREMENTO)
-)
+SIZE = 11MB
+)*/
 
---SEGUNDA PARTE: REDUCIAR A 5MB
-USE BDEJEMPLO06
+--SEGUNDA PARTE
+/*USE BDEJEMPLO06
 GO
-DBCC SHRINKFILE(N'BDEJEMPLO06FG_DATA', 5)
+DBCC SHRINKFILE(N'BDEJEMPLO06FG_DATA',5)*/
