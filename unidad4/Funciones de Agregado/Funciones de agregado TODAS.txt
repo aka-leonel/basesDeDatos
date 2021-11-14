@@ -1,0 +1,110 @@
+/*Laboratorio Funciones de Agregado
+
+1) Mostrar la fecha más reciente de venta 
+Tablas: Sales.SalesOrderHeader
+Campos: OrderDate*/
+
+USE AdventureWorks2019
+GO
+SELECT MAX(ORDERDATE)
+FROM Sales.SalesOrderHeader
+
+
+
+
+/*2) Mostrar el precio más barato de todas las bicicletas 
+Tablas: Production.Product
+Campos: ListPrice, Name*/
+
+SELECT TOP 1 Name,
+		ListPrice
+FROM Production.Product
+WHERE NAME LIKE '%BIKE%'
+ORDER BY ListPrice
+
+SELECT NAME, 
+		LISTPRICE
+		FROM Production.Product
+		WHERE ListPrice = 
+			(SELECT MIN(LISTPRICE) FROM Production.Product
+			WHERE NAME LIKE '%BIKE%')
+			AND NAME LIKE '%BIKE%'
+
+--SOLO MUESTRA PRECIO
+/*USE AdventureWorks2019
+SELECT MIN(LISTPRICE)
+FROM Production.Product
+WHERE NAME LIKE '%bike%'
+*/
+
+
+/*3) Mostrar la fecha de nacimiento del empleado más joven 
+Tablas: HumanResources.Employee
+Campos: BirthDate*/
+
+SELECT *
+FROM HumanResources.Employee
+WHERE BirthDate = (SELECT MAX(BirthDate) FROM HumanResources.Employee)
+
+
+
+/*
+4) Mostrar el promedio del listado de precios de productos
+Tablas: Production.Product
+Campos: ListPrice*/
+SELECT AVG(LISTPRICE) AS PrecioPromedio
+FROM Production.Product
+
+
+/*
+5) Mostrar la cantidad y el total vendido por productos 
+Tablas: Sales.SalesOrderDetail
+Campos: LineTotal, OrderQty*/
+SELECT SalesOrderID, 
+		SUM(LineTotal) AS SumaTotal,
+		SUM(ORDERQTY) AS SumaCantidades
+FROM Sales.SalesOrderDetail
+GROUP BY SalesOrderID
+
+
+
+
+/*AGRUPAMIENTO
+1) Mostrar el código de subcategoría y 
+el precio del producto más barato de cada una de ellas 
+Tablas: Production.Product
+Campos: ProductSubcategoryID, ListPrice*/
+
+SELECT ProductSubcategoryID
+FROM Production.Product
+GROUP BY ProductSubcategoryID
+
+
+/*2) Mostrar los productos y la cantidad total vendida de cada uno de ellos
+Tablas: Sales.SalesOrderDetail
+Campos: ProductID, OrderQty
+
+3)Mostrar los productos y el  total vendido de cada uno de ellos, ordenarlos por el total vendido
+Tablas: Sales.SalesOrderDetail
+Campos: ProductID, LineTotal
+
+4) Mostrar el promedio vendido por factura. 
+Tablas: Sales.SalesOrderDetail
+Campos: SalesOrderID, LineTotal
+
+HAVING
+1) Mostrar todas las facturas realizadas y el total facturado de cada una de ellas ordenado por número de factura pero sólo de aquellas órdenes superen un total de $10.000 
+Tablas: Sales.SalesOrderDetail
+Campos: SalesOrderID, LineTotal
+
+2) Mostrar la cantidad de facturas que vendieron más de 20 unidades 
+Tablas: Sales.SalesOrderDetail
+Campos: SalesOrderID, OrderQty
+
+3) Mostrar las subcategorías de los productos que tienen dos o más productos que cuestan menos de $150 
+Tablas: Production.Product
+Campos: ProductSubcategoryID, ListPrice
+
+4) Mostrar todos los códigos de categorías existentes junto con la cantidad de productos y el precio de lista promedio por cada uno de aquellos productos que cuestan más de $ 70 y el precio promedio es mayor a $ 300.
+Tablas: Production.Product
+Campos: ProductSubcategoryID, ListPrice*/
