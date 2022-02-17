@@ -259,12 +259,13 @@ SELECT P.ProductID, P.ListPrice, V.BusinessEntityID
 FROM Produccion P
 INNER JOIN Purchasing.ProductVendor V
 ON P.ProductID = V.ProductID
-WHERE V.BusinessEntityID = 1540
+WHERE V.BusinessEntityID = 1542
 ORDER BY P.ListPrice DESC
 /*y todos valen cero!
 seria inutil aumentarles un 20%, asi que solo para probar
 la query le sumaré $23 a cada uno
 */
+
 UPDATE Produccion
 SET ListPrice = ListPrice+23
 WHERE ProductID IN (
@@ -340,15 +341,12 @@ DROP TABLE Produccion
 Tablas: Sales.SalesOrderDetail
 Campos: LineTotal*/
 
-DECLARE @TotalVentas INT=0
+DECLARE @TotalVentas NUMERIC(20,4)=0
 SET @TotalVentas = (
-				SELECT COUNT(*) FROM Sales.SalesOrderDetail
+				SELECT SUM(LineTotal) FROM Sales.SalesOrderDetail
 				WHERE YEAR(ModifiedDate) = 2014--37K rows
 				)
-
 SELECT @TotalVentas AS TotalVentas
-
-
 
 /*2) Obtener el promedio de ventas y guardarlo en una variable llamada  @Promedio 
 luego hacer un reporte de todos los productos cuyo precio de venta sea menor al Promedio.
@@ -372,14 +370,14 @@ WHERE ListPrice < @Promedio
 sean inferior al promedio.
 Tablas: Production.Product
 Campos: ListPrice*/
-DECLARE @Promedio FLOAT
-SET @Promedio = (
+DECLARE @Promedio2 MONEY
+SET @Promedio2 = (
 				SELECT AVG(ListPrice)
 				FROM Production.Product
 				)
 UPDATE Production.Product
 SET ListPrice = ListPrice * 1.1
-WHERE ListPrice<@Promedio
+WHERE ListPrice<@Promedio2
 
 /*4)Crear un variable de tipo tabla con las categorías y subcategoría de productos 
  y reportar el resultado.
@@ -397,13 +395,13 @@ ON S.ProductCategoryID = C.ProductCategoryID
 --declaro y asigno
 --solo pude lograrlo previamente declarando campo y tipo en la variable tipo tabla
 --hubiera preferido que se clonaran solas las columnas
-DECLARE @MyTableVariable TABLE(ProductSubcategoryID INT,
+DECLARE @MiVariableTabla TABLE(ProductSubcategoryID INT,
 								ProductCategoryID INT,
 								SubcategoryName VARCHAR(50),
 								Category VARCHAR(50)
 								)
 
-INSERT INTO @MyTableVariable 
+INSERT INTO @MiVariableTabla 
 			SELECT S.ProductSubcategoryID,
 					C.ProductCategoryID,
 					S.Name,
@@ -412,12 +410,16 @@ INSERT INTO @MyTableVariable
 			JOIN Production.ProductCategory C
 			ON S.ProductCategoryID = C.ProductCategoryID
 
-SELECT * FROM @MyTableVariable
+SELECT * FROM @MiVariableTabla
 
 /*5)Analizar el promedio de la lista de precios de productos, si su valor es menor 500 
 imprimir el mensaje el PROMEDIO BAJO de lo contrario imprimir el mensaje PROMEDIO ALTO
 */
 DECLARE @PrecioPromedio FLOAT =(SELECT AVG(ListPrice) 
 								FROM Production.Product)
-IF @PrecioPromedio < 500 PRINT 'PROMEDIO BAJO'
-ELSE PRINT 'PROMEDIO ALTO'
+IF @PrecioPromedio < 500 
+BEGIN
+	PRINT 'PROMEDIO BAJO'
+END	ELSE
+	BEGIN PRINT 'PROMEDIO ALTO'
+END

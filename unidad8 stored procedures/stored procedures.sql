@@ -49,16 +49,15 @@ Tablas: Production.Product
 Campos: ProductID, Name, ListPrice*/
 IF OBJECT_ID('dbo.ActualizaPrecio', 'P') IS NOT NULL DROP PROCEDURE dbo.ActualizaPrecio
 GO
-CREATE PROCEDURE ActualizaPrecio @name varchar(30), @precioRecibido money
+CREATE PROCEDURE ActualizaPrecio @id int, @precioRecibido money
 AS
 BEGIN
 	UPDATE Production.Product
 	SET ListPrice = @precioRecibido
-	WHERE  NAME LIKE '%'+@name+'%' --LIKE '%BIKE%'
+	WHERE  ProductID = @id
 END
-EXEC ActualizaPrecio 'justable', 10
-
-SELECT * FROM Production.Product
+EXEC ActualizaPrecio 20, 10
+SELECT * FROM Production.Product where ProductID = 20;
 
 
 /*4)Crear un procedimiento almacenado llamado ProveedorProducto  que devuelva los proveedores que proporcionan el producto especificado por parámetro. 
@@ -117,7 +116,7 @@ BEGIN
 END
 GO
 
-SELECT dbo.devolverPromedio();
+SELECT dbo.devolverPromedio() as Promedio;
 
 /*2)Crear una función que dado un código de producto devuelva el total de ventas para dicho producto luego,mediante una  consulta, traer código y total de ventas.
 Tablas: Sales.SalesOrderDetail
@@ -125,7 +124,7 @@ Campos: ProductID, LineTotal*/
 
 DROP FUNCTION IF EXISTS dbo.contarVentasProducto
 go
-CREATE FUNCTION dbo.contarVentasProducto (@codigoRecibido INT)
+CREATE FUNCTION dbo.contarVentasProducto @codigoRecibido INT
 RETURNS INT
 AS
 BEGIN
